@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tickets - Smart IT Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div th:replace="~{fragments/navbar :: .navbar}"></div>
+
+    <div class="container mt-4">
+        <h1>IT Tickets</h1>
+        <a href="/tickets/new" class="btn btn-success mb-3">+ New Ticket</a>
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Machine</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="ticket : ${tickets}">
+                    <td th:text="${ticket.id}"></td>
+                    <td th:text="${ticket.title}"></td>
+                    <td th:text="${ticket.machineName}"></td>
+                    <td th:text="${ticket.status}"></td>
+                    <td th:text="${ticket.createdAt}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p>© 2026 Smart IT Platform - OneTech Group • Tunisie Câbles</p>
+            <small>Data Engineering Internship Project</small>
+        </div>
+    </footer>
+</body>
+</html>

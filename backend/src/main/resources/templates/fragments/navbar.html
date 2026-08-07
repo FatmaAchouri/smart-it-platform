@@ -1,0 +1,30 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Smart IT Platform</a>
+        
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            <span class="text-light me-4">
+                <i class="fas fa-user"></i> 
+                <span th:text="${#authentication?.name} ?: 'Guest'"></span>
+            </span>
+            
+            <!-- Role badge -->
+            <span class="badge bg-success me-3" th:if="${#authentication != null and #authentication.authorities.?[authority=='ROLE_ADMIN'].size() > 0}">
+                ADMIN
+            </span>
+
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+            <a href="/machines" class="nav-link">Machines</a>
+            <a href="/tickets" class="nav-link">Tickets</a>
+            <a href="/notifications" class="nav-link">Notifications</a>
+            <a href="/analytics" class="nav-link">Analytics</a>
+            <a href="/predictive" class="nav-link">Predictive Maintenance</a>
+            <a href="/chat" class="nav-link">Chatbot</a>
+            
+            <a href="/logout" class="nav-link text-danger ms-3">Logout</a>
+        </div>
+        <button onclick="toggleTheme()" class="btn btn-outline-light btn-sm ms-3">
+            <i class="fas fa-moon" id="themeIcon"></i>
+        </button>
+    </div>
+</nav>

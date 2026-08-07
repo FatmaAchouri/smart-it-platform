@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Smart IT Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .stat-card { transition: all 0.3s ease; }
+        .stat-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
+        canvas { max-height: 260px !important; }
+    </style>
+</head>
+<body class="bg-light">
+    <div th:replace="~{fragments/navbar :: .navbar}"></div>
+
+    <div class="container mt-5">
+        <h2 class="mb-4 text-primary">Dashboard - Overview</h2>
+
+        <!-- Statistics Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="stat-card card border-0 shadow h-100 text-white bg-primary">
+                    <div class="card-body text-center">
+                        <i class="fas fa-cogs fa-3x mb-3"></i>
+                        <h5>Total Machines</h5>
+                        <h2 th:text="${totalMachines}">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card card border-0 shadow h-100 text-white bg-success">
+                    <div class="card-body text-center">
+                        <i class="fas fa-check-circle fa-3x mb-3"></i>
+                        <h5>Active Machines</h5>
+                        <h2 th:text="${activeMachines}">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card card border-0 shadow h-100 text-white bg-danger">
+                    <div class="card-body text-center">
+                        <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                        <h5>HS Machines</h5>
+                        <h2 th:text="${hsMachines}">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card card border-0 shadow h-100 text-white bg-warning">
+                    <div class="card-body text-center">
+                        <i class="fas fa-ticket-alt fa-3x mb-3"></i>
+                        <h5>Open Tickets</h5>
+                        <h2 th:text="${openTickets}">0</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-white"><h5>Status Distribution</h5></div>
+                    <div class="card-body">
+                        <canvas id="statusChart" height="260"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-white"><h5>Machines by Zone</h5></div>
+                    <div class="card-body">
+                        <canvas id="zoneChart" height="260"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mt-4">
+            <div class="col-md-12">
+                <div class="card shadow">
+                    <div class="card-header bg-white"><h5>Production Lines Trend</h5></div>
+                    <div class="card-body">
+                        <canvas id="lineChart" height="260"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card card border-0 shadow h-100 text-white" 
+                th:classappend="${healthScore > 70 ? 'bg-success' : healthScore > 50 ? 'bg-warning' : 'bg-danger'}">
+                <div class="card-body text-center">
+                    <i class="fas fa-heartbeat fa-3x mb-3"></i>
+                    <h5>Factory Health</h5>
+                    <h2 th:text="${healthScore} + '%'">85%</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const active = /*[[${activeMachines}]]*/ 0;
+        const hs = /*[[${hsMachines}]]*/ 0;
+        const total = /*[[${totalMachines}]]*/ 0;
+        const others = total - active - hs;
+
+        // Status Doughnut
+        new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Active', 'HS', 'Others'],
+                datasets: [{ data: [active, hs, others], backgroundColor: ['#28a745', '#dc3545', '#ffc107'] }]
+            }
+        });
+
+        // Zone Bar
+        const zones = /*[[${machinesByZone}]]*/ {};
+        new Chart(document.getElementById('zoneChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(zones),
+                datasets: [{ label: 'Machines', data: Object.values(zones), backgroundColor: '#0d6efd' }]
+            }
+        });
+
+        // Production Line Trend
+        new Chart(document.getElementById('lineChart'), {
+            type: 'line',
+            data: {
+                labels: ['Line 08', 'Line 10', 'Line 12', 'Line 13', 'Line 16'],
+                datasets: [{
+                    label: 'Machines',
+                    data: [4, 5, 8, 6, 7],
+                    borderColor: '#28a745',
+                    tension: 0.4
+                }]
+            }
+        });
+        /*]]>*/
+    </script>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.getElementById('themeIcon');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('themeIcon').classList.add('fa-sun');
+            document.getElementById('themeIcon').classList.remove('fa-moon');
+        }
+    </script>
+
+    <style>
+        .dark-mode {
+            background-color: #121212 !important;
+            color: #e0e0e0 !important;
+        }
+        .dark-mode .card, .dark-mode .navbar {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+        }
+        .dark-mode .bg-light {
+            background-color: #121212 !important;
+        }
+    </style>
+
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p>© 2026 Smart IT Platform - OneTech Group • Tunisie Câbles</p>
+            <small>Data Engineering Internship Project</small>
+        </div>
+    </footer>
+
+</body>
+</html>

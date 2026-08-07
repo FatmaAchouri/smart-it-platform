@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail Machine - Historique</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div th:replace="~{fragments/navbar :: .navbar}"></div>
+
+    <div class="container mt-5">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 th:text="${machine.name}"></h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Predictive Maintenance</h5>
+                        <div class="mb-3">
+                            <strong>Health Score:</strong> 
+                            <span th:text="${machine.healthScore} + '%'" 
+                                  class="badge" 
+                                  th:classappend="${machine.healthScore > 70 ? 'bg-success' : machine.healthScore > 50 ? 'bg-warning' : 'bg-danger'}"></span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Failure Risk:</strong> 
+                            <span th:text="${machine.failureRisk} + '%'" class="text-danger"></span>
+                        </div>
+                        <div>
+                            <strong>Next Maintenance:</strong> 
+                            <span th:text="${machine.daysUntilMaintenance} + ' days'" class="text-primary"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Technical Information</h5>
+                        <p><strong>Code:</strong> <span th:text="${machine.codeEquipement}"></span></p>
+                        <p><strong>Brand:</strong> <span th:text="${machine.brand}"></span></p>
+                        <p><strong>Status:</strong> <span th:text="${machine.status}"></span></p>
+                        <p><strong>Location:</strong> <span th:text="${machine.location}"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Historique -->
+        <h5 class="mt-5">Historique des Changements</h5>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Statut</th>
+                    <th>Health Score</th>
+                    <th>Risque Panne</th>
+                    <th>Jours Restants</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="history : ${history}">
+                    <td th:text="${history.date}"></td>
+                    <td th:text="${history.status}"></td>
+                    <td th:text="${history.healthScore}"></td>
+                    <td th:text="${history.failureRisk}"></td>
+                    <td th:text="${history.daysUntilMaintenance}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
