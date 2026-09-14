@@ -45,3 +45,17 @@ Elle permet de :
 ---
 
 ## Structure du projet
+smart-it-platform/
+├── backend/          # Application Spring Boot
+├── frontend/         # (si présent)
+└── etl/              # Scripts Python d’importation des données
+## Objectif
+
+Ce projet vise à moderniser la gestion des équipements industriels en transformant les données brutes (Excel Coswin) en informations actionnables pour les équipes de maintenance, afin de réduire les pannes imprévues et améliorer la disponibilité des machines.
+
+---
+
+## Auteur
+
+**Fatma Achouri**  
+Stage Data Engineering – OneTech Company / Tunisie Câbles
